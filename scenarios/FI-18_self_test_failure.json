@@ -1,0 +1,28 @@
+{
+  "id": "FI-18",
+  "title": "Power-on self-test failure",
+  "requirements": [
+    "REQ-BOOT-005"
+  ],
+  "description": "A SELF_TEST_FAILURE is armed in BOOT; the next INIT must enter FAULT instead of NOMINAL.",
+  "initial_state": "BOOT",
+  "setup": [],
+  "inject": [
+    "FAULT_INJECT SELF_TEST_FAILURE",
+    "TELEMETRY seq=1 battery_v=7.6 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID",
+    "INIT"
+  ],
+  "expect": {
+    "inject_status": [
+      "OK",
+      "OK",
+      "OK"
+    ],
+    "final_mode": "FAULT",
+    "events_present": [
+      "FAULT_INJECTED",
+      "SELF_TEST_FAILED",
+      "MODE_CHANGE"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{"response_seq":1,"command":"INIT","status":"REJECTED","mode":"BOOT","sim_time_s":0,"error":{"code":"NO_TELEMETRY","message":"INIT requires at least one accepted telemetry frame"}}
+{"response_seq":2,"command":"TELEMETRY","status":"REJECTED","mode":"BOOT","sim_time_s":0,"error":{"code":"INVALID_ARGUMENT","message":"battery_v must be a finite decimal number, got 'abc'"}}
+{"response_seq":3,"command":"TELEMETRY","status":"REJECTED","mode":"BOOT","sim_time_s":0,"error":{"code":"MISSING_FIELD","message":"telemetry field 'sensors' is missing"}}
+{"response_seq":4,"command":"TELEMETRY","status":"REJECTED","mode":"BOOT","sim_time_s":0,"error":{"code":"OUT_OF_RANGE","message":"temp_c=200 is outside the plausible range [-150, 150] C"}}
+{"response_seq":5,"command":"TELEMETRY","status":"OK","mode":"BOOT","sim_time_s":0,"data":{"accepted_seq":3,"active_violations":[]}}
+{"response_seq":6,"command":"TELEMETRY","status":"REJECTED","mode":"BOOT","sim_time_s":0,"error":{"code":"STALE_SEQUENCE","message":"frame seq 2 is not greater than last accepted seq 3"}}
+{"response_seq":7,"command":"EXIT_SAFE_MODE","status":"REJECTED","mode":"BOOT","sim_time_s":0,"error":{"code":"NOT_PERMITTED_IN_MODE","message":"EXIT_SAFE_MODE is not permitted in mode BOOT; permitted in [\"SAFE_MODE\"]"}}
+{"response_seq":8,"command":"PAYLOAD","status":"REJECTED","mode":"BOOT","sim_time_s":0,"error":{"code":"NOT_PERMITTED_IN_MODE","message":"PAYLOAD is not permitted in mode BOOT; permitted in [\"NOMINAL\"]"}}
+{"response_seq":9,"command":"INIT","status":"OK","mode":"NOMINAL","sim_time_s":0,"data":{"self_test":"PASSED","active_violations":[]}}
+{"response_seq":10,"command":"PAYLOAD","status":"REJECTED","mode":"NOMINAL","sim_time_s":0,"error":{"code":"INVALID_ARGUMENT","message":"PAYLOAD expects ON or OFF, got 'sideways'"}}
+{"response_seq":11,"command":"TICK","status":"REJECTED","mode":"NOMINAL","sim_time_s":0,"error":{"code":"INVALID_ARGUMENT","message":"TICK seconds must be between 1 and 3600"}}
+{"response_seq":12,"command":"RESET","status":"REJECTED","mode":"NOMINAL","sim_time_s":0,"error":{"code":"INVALID_ARGUMENT","message":"wrong number of arguments; usage: RESET CONFIRM"}}
+{"response_seq":13,"command":"STATUS","status":"OK","mode":"NOMINAL","sim_time_s":0,"data":{"mode":"NOMINAL","sim_time_s":0,"payload":"OFF","active_violations":[],"telemetry_available":true,"comm_link":"UP","last_safe_mode_reason":null,"fault_reason":null,"counters":{"commands_accepted":2,"commands_rejected":10,"frames_accepted":1,"frames_rejected":4,"safe_mode_entries":0,"faults":0,"resets":0}}}

@@ -1,0 +1,42 @@
+{
+  "id": "FI-12",
+  "title": "Repeated command execution",
+  "requirements": [
+    "REQ-CMD-007",
+    "REQ-TLM-004"
+  ],
+  "description": "A telemetry frame is replayed (same seq) and ENTER_SAFE_MODE is sent three times. The replay is rejected; the repeated mode command is idempotent.",
+  "initial_state": "NOMINAL",
+  "setup": [
+    "@nominal_boot"
+  ],
+  "inject": [
+    "TELEMETRY seq=1 battery_v=7.6 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID",
+    "ENTER_SAFE_MODE",
+    "ENTER_SAFE_MODE",
+    "ENTER_SAFE_MODE"
+  ],
+  "expect": {
+    "inject_status": [
+      "REJECTED",
+      "OK",
+      "OK",
+      "OK"
+    ],
+    "inject_error_codes": [
+      "STALE_SEQUENCE",
+      null,
+      null,
+      null
+    ],
+    "final_mode": "SAFE_MODE",
+    "active_violations": [],
+    "events_present": [
+      "SAFE_MODE_ALREADY_ACTIVE",
+      "MODE_CHANGE"
+    ],
+    "modes_never": [
+      "FAULT"
+    ]
+  }
+}

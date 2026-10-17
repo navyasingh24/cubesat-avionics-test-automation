@@ -1,0 +1,25 @@
+# Build outputs (never commit binaries)
+/build/
+/build-*/
+cmake-build-*/
+*.o
+*.a
+*.so
+*.dylib
+compile_commands.json
+
+# Generated reports (reports/.gitkeep is tracked)
+/reports/*
+!/reports/.gitkeep
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store

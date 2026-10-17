@@ -1,0 +1,40 @@
+{
+  "id": "FI-17",
+  "title": "Corrupt command input",
+  "requirements": [
+    "REQ-CMD-005"
+  ],
+  "description": "Lines containing a control character, a non-ASCII byte and an oversized payload are rejected without crashing; a valid command afterwards still works.",
+  "initial_state": "NOMINAL",
+  "setup": [
+    "@nominal_boot"
+  ],
+  "inject": [
+    "\u0007STATUS",
+    "STATUS \u00e9",
+    "TICK 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+    "STATUS"
+  ],
+  "expect": {
+    "inject_status": [
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "OK"
+    ],
+    "inject_error_codes": [
+      "MALFORMED_INPUT",
+      "MALFORMED_INPUT",
+      "MALFORMED_INPUT",
+      null
+    ],
+    "final_mode": "NOMINAL",
+    "active_violations": [],
+    "events_present": [
+      "COMMAND_REJECTED"
+    ],
+    "events_absent": [
+      "MODE_CHANGE"
+    ]
+  }
+}

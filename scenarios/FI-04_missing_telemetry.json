@@ -1,0 +1,45 @@
+{
+  "id": "FI-04",
+  "title": "Missing telemetry",
+  "requirements": [
+    "REQ-TLM-002",
+    "REQ-TLM-005"
+  ],
+  "description": "An incomplete frame is rejected; then no valid telemetry arrives. At exactly telemetry_timeout_s (10 s) the data is still fresh; one second later it is stale.",
+  "initial_state": "NOMINAL",
+  "setup": [
+    "@nominal_boot"
+  ],
+  "inject": [
+    "TELEMETRY seq=2 battery_v=7.5",
+    "TICK 10",
+    "STATUS",
+    "TICK 1"
+  ],
+  "expect": {
+    "inject_status": [
+      "REJECTED",
+      "OK",
+      "OK",
+      "OK"
+    ],
+    "inject_error_codes": [
+      "MISSING_FIELD",
+      null,
+      null,
+      null
+    ],
+    "final_mode": "SAFE_MODE",
+    "active_violations": [
+      "TELEMETRY_STALE"
+    ],
+    "events_present": [
+      "TELEMETRY_REJECTED",
+      "SAFETY_VIOLATION",
+      "MODE_CHANGE"
+    ],
+    "modes_never": [
+      "FAULT"
+    ]
+  }
+}

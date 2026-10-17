@@ -1,0 +1,24 @@
+{"response_seq":1,"command":"TELEMETRY","status":"OK","mode":"BOOT","sim_time_s":0,"data":{"accepted_seq":1,"active_violations":[]}}
+{"response_seq":2,"command":"INIT","status":"OK","mode":"NOMINAL","sim_time_s":0,"data":{"self_test":"PASSED","active_violations":[]}}
+{"response_seq":3,"command":"PAYLOAD","status":"OK","mode":"NOMINAL","sim_time_s":0,"data":{"payload":"ON"}}
+{"response_seq":4,"command":"TICK","status":"OK","mode":"NOMINAL","sim_time_s":5,"data":{"sim_time_s":5,"active_violations":[]}}
+{"response_seq":5,"command":"TELEMETRY","status":"OK","mode":"NOMINAL","sim_time_s":5,"data":{"accepted_seq":2,"active_violations":[]}}
+{"response_seq":6,"command":"TICK","status":"OK","mode":"NOMINAL","sim_time_s":10,"data":{"sim_time_s":10,"active_violations":[]}}
+{"response_seq":7,"command":"TELEMETRY","status":"OK","mode":"SAFE_MODE","sim_time_s":10,"data":{"accepted_seq":3,"active_violations":["TEMPERATURE_LOW"]}}
+{"response_seq":8,"command":"PAYLOAD","status":"REJECTED","mode":"SAFE_MODE","sim_time_s":10,"error":{"code":"NOT_PERMITTED_IN_MODE","message":"PAYLOAD is not permitted in mode SAFE_MODE; permitted in [\"NOMINAL\"]"}}
+{"response_seq":9,"command":"EXIT_SAFE_MODE","status":"REJECTED","mode":"SAFE_MODE","sim_time_s":10,"error":{"code":"ACTIVE_VIOLATIONS","message":"cannot exit SAFE_MODE while violations are active: [\"TEMPERATURE_LOW\"]"}}
+{"response_seq":10,"command":"TICK","status":"OK","mode":"SAFE_MODE","sim_time_s":15,"data":{"sim_time_s":15,"active_violations":["TEMPERATURE_LOW"]}}
+{"response_seq":11,"command":"TELEMETRY","status":"OK","mode":"SAFE_MODE","sim_time_s":15,"data":{"accepted_seq":4,"active_violations":[]}}
+{"response_seq":12,"command":"EXIT_SAFE_MODE","status":"OK","mode":"NOMINAL","sim_time_s":15,"data":{"previous_mode":"SAFE_MODE"}}
+{"response_seq":13,"command":"TELEMETRY","status":"OK","mode":"NOMINAL","sim_time_s":15,"data":{"accepted_seq":5,"active_violations":[]}}
+{"response_seq":14,"command":"TICK","status":"OK","mode":"NOMINAL","sim_time_s":25,"data":{"sim_time_s":25,"active_violations":[]}}
+{"response_seq":15,"command":"TELEMETRY","status":"OK","mode":"NOMINAL","sim_time_s":25,"data":{"accepted_seq":6,"active_violations":[]}}
+{"response_seq":16,"command":"TICK","status":"OK","mode":"NOMINAL","sim_time_s":30,"data":{"sim_time_s":30,"active_violations":[]}}
+{"response_seq":17,"command":"TELEMETRY","status":"OK","mode":"NOMINAL","sim_time_s":30,"data":{"accepted_seq":7,"active_violations":[]}}
+{"response_seq":18,"command":"GET_TELEMETRY","status":"OK","mode":"NOMINAL","sim_time_s":30,"data":{"frame":{"seq":7,"battery_v":7.1,"temp_c":-6,"attitude_deg":2,"comm":"UP","sensors":"VALID","received_at_s":30},"age_s":0}}
+{"response_seq":19,"command":"UNKNOWN_THING","status":"REJECTED","mode":"NOMINAL","sim_time_s":30,"error":{"code":"UNKNOWN_COMMAND","message":"unknown command 'UNKNOWN_THING'; send HELP for the command list"}}
+{"response_seq":20,"command":"FAULT_INJECT","status":"OK","mode":"FAULT","sim_time_s":30,"data":{"fault":"INTERNAL_ERROR"}}
+{"response_seq":21,"command":"RESET","status":"OK","mode":"BOOT","sim_time_s":30,"data":{"previous_mode":"FAULT","resets":1}}
+{"response_seq":22,"command":"TELEMETRY","status":"OK","mode":"BOOT","sim_time_s":30,"data":{"accepted_seq":1,"active_violations":[]}}
+{"response_seq":23,"command":"INIT","status":"OK","mode":"NOMINAL","sim_time_s":30,"data":{"self_test":"PASSED","active_violations":[]}}
+{"response_seq":24,"command":"STATUS","status":"OK","mode":"NOMINAL","sim_time_s":30,"data":{"mode":"NOMINAL","sim_time_s":30,"payload":"OFF","active_violations":[],"telemetry_available":true,"comm_link":"UP","last_safe_mode_reason":"TEMPERATURE_LOW","fault_reason":null,"counters":{"commands_accepted":20,"commands_rejected":3,"frames_accepted":8,"frames_rejected":0,"safe_mode_entries":1,"faults":1,"resets":1}}}

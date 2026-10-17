@@ -1,0 +1,16 @@
+{
+  "id": "FI-15",
+  "title": "Corrupt configuration file",
+  "requirements": [
+    "REQ-CFG-002"
+  ],
+  "description": "The configuration file is truncated JSON.",
+  "initial_state": "BOOT",
+  "config_raw": "{\"schema_version\": 1, \"thresholds\": {\"battery_min_v\": 6.8,",
+  "setup": [],
+  "inject": [],
+  "expect": {
+    "exit_code": 3,
+    "stdout_error_code": "CONFIG_INVALID"
+  }
+}

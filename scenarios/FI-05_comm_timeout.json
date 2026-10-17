@@ -1,0 +1,46 @@
+{
+  "id": "FI-05",
+  "title": "Communication timeout",
+  "requirements": [
+    "REQ-SAF-005",
+    "REQ-CFG-001"
+  ],
+  "description": "Ground link reports DOWN while telemetry stays fresh. comm_timeout_s is patched to 20 s for a short scenario. At 20 s without contact the link drop is only a warning; at 21 s COMM_TIMEOUT forces SAFE_MODE. The computer must never enter FAULT for a communication problem.",
+  "initial_state": "NOMINAL",
+  "config_patch": {
+    "timing.comm_timeout_s": 20
+  },
+  "setup": [
+    "@nominal_boot"
+  ],
+  "inject": [
+    "TELEMETRY seq=2 battery_v=7.6 temp_c=22.5 attitude_deg=2.0 comm=DOWN sensors=VALID",
+    "TICK 10",
+    "TELEMETRY seq=3 battery_v=7.6 temp_c=22.5 attitude_deg=2.0 comm=DOWN sensors=VALID",
+    "TICK 10",
+    "TELEMETRY seq=4 battery_v=7.6 temp_c=22.5 attitude_deg=2.0 comm=DOWN sensors=VALID",
+    "TICK 1"
+  ],
+  "expect": {
+    "inject_status": [
+      "OK",
+      "OK",
+      "OK",
+      "OK",
+      "OK",
+      "OK"
+    ],
+    "final_mode": "SAFE_MODE",
+    "active_violations": [
+      "COMM_TIMEOUT"
+    ],
+    "events_present": [
+      "COMM_LINK_DOWN",
+      "SAFETY_VIOLATION",
+      "MODE_CHANGE"
+    ],
+    "modes_never": [
+      "FAULT"
+    ]
+  }
+}

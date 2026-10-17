@@ -1,0 +1,30 @@
+# Golden regression script: a representative simulated "mission day".
+# Changing simulator behaviour changes the recorded output and fails
+# tests/test_regression.py until the golden files are deliberately updated
+# with tools/update_golden.py and the diff is reviewed.
+TELEMETRY seq=1 battery_v=7.6 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID
+INIT
+PAYLOAD ON
+TICK 5
+TELEMETRY seq=2 battery_v=7.5 temp_c=24.0 attitude_deg=3.1 comm=UP sensors=VALID
+TICK 5
+# Eclipse: the board cools below the demo limit
+TELEMETRY seq=3 battery_v=7.3 temp_c=-21.5 attitude_deg=3.0 comm=UP sensors=VALID
+PAYLOAD ON
+EXIT_SAFE_MODE
+TICK 5
+TELEMETRY seq=4 battery_v=7.2 temp_c=-14.0 attitude_deg=2.5 comm=UP sensors=VALID
+EXIT_SAFE_MODE
+# Ground station pass ends: link down for a while
+TELEMETRY seq=5 battery_v=7.2 temp_c=-10.0 attitude_deg=2.0 comm=DOWN sensors=VALID
+TICK 10
+TELEMETRY seq=6 battery_v=7.1 temp_c=-8.0 attitude_deg=2.0 comm=DOWN sensors=VALID
+TICK 5
+TELEMETRY seq=7 battery_v=7.1 temp_c=-6.0 attitude_deg=2.0 comm=UP sensors=VALID
+GET_TELEMETRY
+UNKNOWN_THING
+FAULT_INJECT INTERNAL_ERROR
+RESET CONFIRM
+TELEMETRY seq=1 battery_v=7.4 temp_c=5.0 attitude_deg=1.0 comm=UP sensors=VALID
+INIT
+STATUS

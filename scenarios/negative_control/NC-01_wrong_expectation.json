@@ -1,0 +1,14 @@
+{
+  "id": "NC-01",
+  "title": "NEGATIVE CONTROL - deliberately wrong expectation",
+  "requirements": [],
+  "description": "This scenario is INTENTIONALLY WRONG. It claims a low-battery frame leaves the computer in NOMINAL. The simulator correctly enters SAFE_MODE, so the runner MUST report FAIL and exit non-zero. It lives outside scenarios/*.json so it never runs in the normal suite; scripts/run_demo.sh uses it to show that failures are detected.",
+  "initial_state": "NOMINAL",
+  "setup": ["@nominal_boot"],
+  "inject": ["TELEMETRY seq=2 battery_v=6.5 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID"],
+  "expect": {
+    "inject_status": ["OK"],
+    "final_mode": "NOMINAL",
+    "active_violations": []
+  }
+}

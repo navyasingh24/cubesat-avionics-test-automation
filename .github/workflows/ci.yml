@@ -1,0 +1,72 @@
+# GitHub Actions CI. Uses exactly the same scripts as Jenkins and local runs.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-verify:
+    name: Build & verify (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14]
+    env:
+      CUBESAT_WERROR: "ON"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python test dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Environment & tool checks
+        run: |
+          if [ "$(uname -s)" = Darwin ]; then scripts/setup_macos.sh; else scripts/setup_linux.sh; fi
+
+      - name: Configure (CMake)
+        run: scripts/build.sh configure
+
+      - name: Compile
+        run: scripts/build.sh compile
+
+      - name: Run all verification stages
+        run: scripts/run_tests.sh all
+
+      - name: Defect-detection self-check
+        run: scripts/verify_defect_detection.sh
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ matrix.os }}
+          path: reports/
+          if-no-files-found: error
+
+  sanitizers:
+    name: AddressSanitizer + UBSan (Linux)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CUBESAT_WERROR: "ON"
+      CUBESAT_SANITIZERS: "ON"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt
+      - run: scripts/build.sh
+      - run: scripts/run_tests.sh all

@@ -1,0 +1,53 @@
+{
+  "id": "FI-09",
+  "title": "Recovery after a recoverable fault",
+  "requirements": [
+    "REQ-REC-001",
+    "REQ-MODE-003",
+    "REQ-SAF-006"
+  ],
+  "description": "Starting in SAFE_MODE after a low battery event: recovery is refused while the violation is active, still refused at 6.9 V because of hysteresis, and permitted once the battery reaches battery_recover_v (7.0 V).",
+  "initial_state": "SAFE_MODE",
+  "setup": [
+    "@nominal_boot",
+    "TELEMETRY seq=2 battery_v=6.5 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID"
+  ],
+  "inject": [
+    "EXIT_SAFE_MODE",
+    "TELEMETRY seq=3 battery_v=6.9 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID",
+    "EXIT_SAFE_MODE",
+    "TELEMETRY seq=4 battery_v=7.0 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID",
+    "EXIT_SAFE_MODE",
+    "PAYLOAD ON"
+  ],
+  "expect": {
+    "inject_status": [
+      "REJECTED",
+      "OK",
+      "REJECTED",
+      "OK",
+      "OK",
+      "OK"
+    ],
+    "inject_error_codes": [
+      "ACTIVE_VIOLATIONS",
+      null,
+      "ACTIVE_VIOLATIONS",
+      null,
+      null,
+      null
+    ],
+    "final_mode": "NOMINAL",
+    "active_violations": [],
+    "events_present": [
+      "RECOVERY_ATTEMPT",
+      "RECOVERY_DENIED",
+      "SAFETY_CLEARED",
+      "RECOVERY_SUCCEEDED",
+      "MODE_CHANGE"
+    ],
+    "modes_never": [
+      "FAULT"
+    ]
+  }
+}

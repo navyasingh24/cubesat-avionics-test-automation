@@ -1,0 +1,18 @@
+{
+  "id": "FI-11",
+  "title": "Contradictory configuration",
+  "requirements": [
+    "REQ-CFG-002"
+  ],
+  "description": "battery_recover_v (6.0) is set below battery_min_v (6.8), which would make recovery happen below the trip point. The simulator must refuse to start.",
+  "initial_state": "BOOT",
+  "config_patch": {
+    "thresholds.battery_recover_v": 6.0
+  },
+  "setup": [],
+  "inject": [],
+  "expect": {
+    "exit_code": 3,
+    "stdout_error_code": "CONFIG_INVALID"
+  }
+}
