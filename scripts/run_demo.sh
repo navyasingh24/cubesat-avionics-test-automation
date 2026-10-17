@@ -10,6 +10,7 @@
 # The script exits 0 only if passing checks passed AND deliberately failing
 # checks were detected as failures. The normal build is never left broken.
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 PY="$(pick_python)"

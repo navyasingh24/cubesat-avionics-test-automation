@@ -4,7 +4,7 @@
 # this same script, so local and CI test procedures cannot drift apart.
 #
 # Usage: scripts/run_tests.sh [all|unit|system|fault|regression|report] [-- extra pytest args]
-#   unit        C++ unit tests (CTest)                -> reports/unit-tests.xml
+#   unit        C++ unit tests                        -> reports/unit-tests.xml
 #   system      pytest system tests                   -> reports/junit-system.xml
 #   fault       fault-injection pytest + scenario run -> reports/junit-fault-injection.xml,
 #                                                        reports/fault_injection_report.md
@@ -13,6 +13,7 @@
 #   all         everything above (default). Every stage runs even if an
 #               earlier one fails; the script exits non-zero if ANY failed.
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 STAGE="${1:-all}"
@@ -26,15 +27,10 @@ export CUBESAT_SIM_BIN="${SIM_BIN}"
 
 run_unit() {
     require_built_simulator
-    info "C++ unit tests (CTest)"
-    local cmake_version
-    cmake_version="$(cmake --version | head -n1 | awk '{print $3}')"
-    if version_ge "${cmake_version}" "3.21.0"; then
-        ctest --test-dir "${BUILD_DIR}" --output-on-failure --no-tests=error --output-junit "${REPORT_DIR}/unit-tests.xml"
-    else
-        warn "CMake ${cmake_version} < 3.21: running CTest without JUnit output"
-        (cd "${BUILD_DIR}" && ctest --output-on-failure --no-tests=error)
-    fi
+    local unit_bin="${BUILD_DIR}/cubesat_unit_tests"
+    [[ -x "${unit_bin}" ]] || die "C++ unit tests not built at ${unit_bin} (configure with BUILD_TESTING=ON)"
+    info "C++ unit tests"
+    "${unit_bin}" --junit "${REPORT_DIR}/unit-tests.xml"
 }
 
 run_pytest() {  # <junit name> <marker expression>

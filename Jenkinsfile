@@ -4,7 +4,7 @@
 // by GitHub Actions, so there is one test procedure, not three.
 //
 // Required plugins: Pipeline (workflow-aggregator), Git, JUnit.
-// Required agent tools: bash, git, CMake >= 3.16 (3.21+ for C++ JUnit XML),
+// Required agent tools: bash, git, CMake >= 3.16,
 // a C++17 compiler, Python >= 3.9 (venv module) and network access to PyPI
 // on the first run unless pytest is already installed.
 // No credentials, cloud services or hardware are needed. See docs/jenkins.md.
@@ -53,7 +53,8 @@ pipeline {
                     else
                         "$setup" --create-venv
                     fi
-                    rm -rf "$REPORT_DIR" && mkdir -p "$REPORT_DIR"
+                    # Start from a clean workspace (keeps .venv and reports/.gitkeep).
+                    scripts/clean.sh
                 '''
             }
         }
@@ -139,7 +140,7 @@ pipeline {
         cleanup {
             // Removes build directories, Python caches and reports inside this
             // workspace only (reports are archived above first).
-            sh 'scripts/clean.sh'
+            sh 'if [ -x scripts/clean.sh ]; then scripts/clean.sh; fi'
         }
     }
 }

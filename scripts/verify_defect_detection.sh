@@ -6,10 +6,12 @@
 # of < 6.8 V) into build-defect/, runs the safety-rule tests against it, and
 # SUCCEEDS only if those tests FAIL. The normal build in build/ is untouched.
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 DEFECT_DIR="${REPO_ROOT}/build-defect"
 PY="$(pick_python)"
+mkdir -p "${REPORT_DIR}"
 require_pytest "${PY}"
 require_cmd cmake "Install CMake (see README)."
 
@@ -20,11 +22,11 @@ cmake --build "${DEFECT_DIR}" --target cubesat_sim --parallel "$(cpu_count)" >/d
 info "Running safety-rule tests against the defective build (failures EXPECTED)"
 set +e
 CUBESAT_SIM_BIN="${DEFECT_DIR}/cubesat_sim" "${PY}" -m pytest -q -p no:cacheprovider \
-    "${REPO_ROOT}/tests/test_safety_rules.py" 2>&1 | tee "${REPORT_DIR:-${REPO_ROOT}/reports}/seeded_defect_run.txt"
+    "${REPO_ROOT}/tests/test_safety_rules.py" 2>&1 | tee "${REPORT_DIR}/seeded_defect_run.txt"
 status=${PIPESTATUS[0]}
 set -e
 
-if [[ ${status} -eq 1 ]] && grep -q "test_battery_boundary\[6.8-NOMINAL\]" "${REPORT_DIR:-${REPO_ROOT}/reports}/seeded_defect_run.txt"; then
+if [[ ${status} -eq 1 ]] && grep -q "test_battery_boundary\[6.8-NOMINAL\]" "${REPORT_DIR}/seeded_defect_run.txt"; then
     ok "Seeded defect DETECTED by test_battery_boundary[6.8-NOMINAL] (pytest exit ${status})"
 else
     die "Seeded defect was NOT detected as expected (pytest exit ${status}) - the tests are too weak"

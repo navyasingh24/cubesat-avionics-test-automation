@@ -9,6 +9,7 @@
 #   --create-venv  create <repo>/.venv and install requirements.txt into it
 #                  (project-local; nothing is installed system-wide)
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 APT_HINT="sudo apt-get update && sudo apt-get install -y build-essential cmake python3 python3-venv git"
@@ -35,7 +36,6 @@ check git     "${APT_HINT}"
 if command -v cmake >/dev/null 2>&1; then
     cmake_version="$(cmake --version | head -n1 | awk '{print $3}')"
     version_ge "${cmake_version}" "3.16.0" || { fail "CMake ${cmake_version} < 3.16"; missing=1; }
-    version_ge "${cmake_version}" "3.21.0" || warn "CMake ${cmake_version} < 3.21: C++ unit-test JUnit XML will be skipped"
 fi
 if command -v python3 >/dev/null 2>&1; then
     python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 9) else 1)' \

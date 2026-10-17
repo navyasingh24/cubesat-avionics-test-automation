@@ -11,6 +11,7 @@
 #   CUBESAT_WERROR ON to treat compiler warnings as errors (CI sets ON)
 #   CUBESAT_SANITIZERS ON to build with AddressSanitizer/UBSan
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 STEP="all"

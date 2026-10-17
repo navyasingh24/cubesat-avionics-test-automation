@@ -4,6 +4,8 @@
 // builds offline. The Python/pytest suite in tests/ is the main system-level
 // verification; these tests check individual classes in isolation.
 #include <cmath>
+#include <cstring>
+#include <fstream>
 #include <functional>
 #include <iostream>
 #include <sstream>
@@ -38,12 +40,56 @@ struct Registrar {
 };
 
 int g_failures = 0;
+std::vector<std::string> g_messages;  // failure messages of the running test
 
 void expect(bool condition, const char* expression, const char* file, int line) {
     if (!condition) {
         ++g_failures;
-        std::cerr << "    FAILED: " << expression << " (" << file << ":" << line << ")\n";
+        const std::string message =
+            std::string(expression) + " (" + file + ":" + std::to_string(line) + ")";
+        g_messages.push_back(message);
+        std::cerr << "    FAILED: " << message << '\n';
     }
+}
+
+std::string xmlEscape(const std::string& text) {
+    std::string out;
+    for (const char c : text) {
+        switch (c) {
+            case '&': out += "&amp;"; break;
+            case '<': out += "&lt;"; break;
+            case '>': out += "&gt;"; break;
+            case '"': out += "&quot;"; break;
+            default: out.push_back(c);
+        }
+    }
+    return out;
+}
+
+struct Outcome {
+    std::string name;
+    std::vector<std::string> messages;
+};
+
+// Writes one JUnit <testcase> per C++ test so CI shows individual results.
+bool writeJunit(const std::string& path, const std::vector<Outcome>& outcomes, int failed) {
+    std::ofstream out(path);
+    if (!out) return false;
+    out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        << "<testsuite name=\"cpp-unit-tests\" tests=\"" << outcomes.size() << "\" failures=\""
+        << failed << "\" errors=\"0\" skipped=\"0\">\n";
+    for (const Outcome& outcome : outcomes) {
+        out << "  <testcase classname=\"unit_tests\" name=\"" << xmlEscape(outcome.name) << "\"";
+        if (outcome.messages.empty()) {
+            out << "/>\n";
+            continue;
+        }
+        out << ">\n    <failure message=\"" << xmlEscape(outcome.messages.front()) << "\">";
+        for (const std::string& message : outcome.messages) out << xmlEscape(message) << '\n';
+        out << "</failure>\n  </testcase>\n";
+    }
+    out << "</testsuite>\n";
+    return static_cast<bool>(out);
 }
 
 #define TEST(name)                                     \
@@ -303,21 +349,40 @@ TEST(cli_exit_codes) {
 
 }  // namespace
 
-int main() {
+// Usage: cubesat_unit_tests [--junit <file>]
+int main(int argc, char** argv) {
+    std::string junitPath;
+    for (int i = 1; i < argc; ++i) {
+        if (std::strcmp(argv[i], "--junit") == 0 && i + 1 < argc) {
+            junitPath = argv[++i];
+        } else {
+            std::cerr << "usage: cubesat_unit_tests [--junit <file>]\n";
+            return 2;
+        }
+    }
+
     int failedTests = 0;
+    std::vector<Outcome> outcomes;
     for (const TestCase& test : registry()) {
         const int before = g_failures;
+        g_messages.clear();
         try {
             test.body();
         } catch (const std::exception& ex) {
             ++g_failures;
+            g_messages.push_back(std::string("unexpected exception: ") + ex.what());
             std::cerr << "    EXCEPTION: " << ex.what() << '\n';
         }
         const bool passed = g_failures == before;
         if (!passed) ++failedTests;
+        outcomes.push_back({test.name, g_messages});
         std::cout << (passed ? "[PASS] " : "[FAIL] ") << test.name << '\n';
     }
     std::cout << registry().size() - static_cast<std::size_t>(failedTests) << " passed, "
               << failedTests << " failed\n";
+    if (!junitPath.empty() && !writeJunit(junitPath, outcomes, failedTests)) {
+        std::cerr << "cannot write JUnit report to " << junitPath << '\n';
+        return 1;
+    }
     return failedTests == 0 ? 0 : 1;
 }

@@ -8,6 +8,7 @@
 # Safety: paths are fixed, relative to the repository root resolved from this
 # script's own location, and the root is verified before anything is deleted.
 set -euo pipefail
+# shellcheck source=scripts/lib.sh
 source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 grep -q "CubeSatAvionicsTestAutomation" "${REPO_ROOT}/CMakeLists.txt" 2>/dev/null \

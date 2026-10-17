@@ -128,6 +128,8 @@ def run_scenario(sim: Simulator, scenario: Dict[str, Any]) -> ScenarioResult:
 
         commands = setup + inject + ["STATUS"]
         run = sim.run(commands, config=config_path, extra_args=extra_args)
+        # Temporary paths differ on every run; keep reports deterministic.
+        stderr_lines = [line.replace(tmp, "<tmpdir>") for line in run.stderr.splitlines() if line.strip()]
 
     actual: Dict[str, Any] = {"exit_code": run.exit_code}
     expected_exit = expect.get("exit_code", EXIT_OK)
@@ -143,7 +145,7 @@ def run_scenario(sim: Simulator, scenario: Dict[str, Any]) -> ScenarioResult:
             )
         return ScenarioResult(
             scenario["id"], scenario["title"], not mismatches, mismatches, actual,
-            [line for line in run.stderr.splitlines() if line.strip()][:5],
+            stderr_lines[:5],
         )
 
     expected_responses = len(setup) + len(inject) + 1
