@@ -1,0 +1,47 @@
+{
+  "id": "FI-13",
+  "title": "Unexpected state transition attempts",
+  "requirements": [
+    "REQ-MODE-004",
+    "REQ-CMD-004"
+  ],
+  "description": "After an injected internal error puts the computer in FAULT, every attempt to leave FAULT other than RESET CONFIRM is refused.",
+  "initial_state": "FAULT",
+  "setup": [
+    "@nominal_boot",
+    "FAULT_INJECT INTERNAL_ERROR"
+  ],
+  "inject": [
+    "EXIT_SAFE_MODE",
+    "ENTER_SAFE_MODE",
+    "INIT",
+    "TELEMETRY seq=2 battery_v=7.6 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID",
+    "PAYLOAD ON",
+    "FAULT_INJECT INTERNAL_ERROR"
+  ],
+  "expect": {
+    "inject_status": [
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "REJECTED"
+    ],
+    "inject_error_codes": [
+      "NOT_PERMITTED_IN_MODE",
+      "NOT_PERMITTED_IN_MODE",
+      "NOT_PERMITTED_IN_MODE",
+      "NOT_PERMITTED_IN_MODE",
+      "NOT_PERMITTED_IN_MODE",
+      "NOT_PERMITTED_IN_MODE"
+    ],
+    "final_mode": "FAULT",
+    "events_present": [
+      "COMMAND_REJECTED"
+    ],
+    "events_absent": [
+      "MODE_CHANGE"
+    ]
+  }
+}

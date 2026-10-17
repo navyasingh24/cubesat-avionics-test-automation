@@ -1,0 +1,16 @@
+{
+  "id": "FI-14",
+  "title": "Missing input data (script file)",
+  "requirements": [
+    "REQ-CLI-003"
+  ],
+  "description": "The command script file does not exist. The simulator must exit with code 4 and a structured error instead of crashing or reading stdin.",
+  "initial_state": "BOOT",
+  "script_missing": true,
+  "setup": [],
+  "inject": [],
+  "expect": {
+    "exit_code": 4,
+    "stdout_error_code": "INPUT_NOT_FOUND"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "FI-16",
+  "title": "Missing configuration file",
+  "requirements": [
+    "REQ-CFG-002"
+  ],
+  "description": "The configuration file path does not exist.",
+  "initial_state": "BOOT",
+  "config_missing": true,
+  "setup": [],
+  "inject": [],
+  "expect": {
+    "exit_code": 3,
+    "stdout_error_code": "CONFIG_NOT_FOUND"
+  }
+}

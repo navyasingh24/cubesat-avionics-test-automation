@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "thresholds": {
+    "battery_min_v": 6.8,
+    "battery_recover_v": 7.0,
+    "temp_max_c": 60.0,
+    "temp_max_recover_c": 55.0,
+    "temp_min_c": -20.0,
+    "temp_min_recover_c": -15.0,
+    "attitude_max_deg": 15.0,
+    "attitude_recover_deg": 10.0
+  },
+  "timing": {
+    "telemetry_timeout_s": 10,
+    "comm_timeout_s": 60,
+    "max_tick_s": 3600
+  },
+  "limits": {
+    "max_command_length": 256
+  }
+}

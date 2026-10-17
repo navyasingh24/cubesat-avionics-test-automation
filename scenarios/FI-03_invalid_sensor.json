@@ -1,0 +1,39 @@
+{
+  "id": "FI-03",
+  "title": "Invalid sensor readings",
+  "requirements": [
+    "REQ-SAF-004",
+    "REQ-TLM-003"
+  ],
+  "description": "First an implausible reading (battery_v=25, outside the 0-20 V plausibility range) is rejected as corrupt input; then a frame flagged sensors=INVALID arrives carrying a garbage battery value that must NOT be trusted.",
+  "initial_state": "NOMINAL",
+  "setup": [
+    "@nominal_boot"
+  ],
+  "inject": [
+    "TELEMETRY seq=2 battery_v=25 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID",
+    "TELEMETRY seq=3 battery_v=0.5 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=INVALID"
+  ],
+  "expect": {
+    "inject_status": [
+      "REJECTED",
+      "OK"
+    ],
+    "inject_error_codes": [
+      "OUT_OF_RANGE",
+      null
+    ],
+    "final_mode": "SAFE_MODE",
+    "active_violations": [
+      "SENSOR_INVALID"
+    ],
+    "events_present": [
+      "TELEMETRY_REJECTED",
+      "SAFETY_VIOLATION",
+      "MODE_CHANGE"
+    ],
+    "modes_never": [
+      "FAULT"
+    ]
+  }
+}

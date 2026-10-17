@@ -1,0 +1,43 @@
+{
+  "id": "FI-10",
+  "title": "Multiple simultaneous safety violations",
+  "requirements": [
+    "REQ-SAF-007",
+    "REQ-MODE-003"
+  ],
+  "description": "Battery, temperature and attitude violate their limits in the same frame. All three must be reported; clearing only one must not allow recovery.",
+  "initial_state": "NOMINAL",
+  "setup": [
+    "@nominal_boot"
+  ],
+  "inject": [
+    "TELEMETRY seq=2 battery_v=6.5 temp_c=65 attitude_deg=20 comm=UP sensors=VALID",
+    "TELEMETRY seq=3 battery_v=7.2 temp_c=65 attitude_deg=20 comm=UP sensors=VALID",
+    "EXIT_SAFE_MODE"
+  ],
+  "expect": {
+    "inject_status": [
+      "OK",
+      "OK",
+      "REJECTED"
+    ],
+    "inject_error_codes": [
+      null,
+      null,
+      "ACTIVE_VIOLATIONS"
+    ],
+    "final_mode": "SAFE_MODE",
+    "active_violations": [
+      "TEMPERATURE_HIGH",
+      "ATTITUDE_EXCEEDED"
+    ],
+    "events_present": [
+      "SAFETY_VIOLATION",
+      "SAFETY_CLEARED",
+      "RECOVERY_DENIED"
+    ],
+    "modes_never": [
+      "FAULT"
+    ]
+  }
+}

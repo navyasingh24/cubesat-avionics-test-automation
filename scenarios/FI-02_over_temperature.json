@@ -1,0 +1,32 @@
+{
+  "id": "FI-02",
+  "title": "Excessive temperature",
+  "requirements": [
+    "REQ-SAF-002",
+    "REQ-MODE-001"
+  ],
+  "description": "Board temperature rises just above temp_max_c (60 C demo threshold).",
+  "initial_state": "NOMINAL",
+  "setup": [
+    "@nominal_boot"
+  ],
+  "inject": [
+    "TELEMETRY seq=2 battery_v=7.6 temp_c=60.01 attitude_deg=2.0 comm=UP sensors=VALID"
+  ],
+  "expect": {
+    "inject_status": [
+      "OK"
+    ],
+    "final_mode": "SAFE_MODE",
+    "active_violations": [
+      "TEMPERATURE_HIGH"
+    ],
+    "events_present": [
+      "SAFETY_VIOLATION",
+      "MODE_CHANGE"
+    ],
+    "modes_never": [
+      "FAULT"
+    ]
+  }
+}

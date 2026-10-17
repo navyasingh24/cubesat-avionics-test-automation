@@ -1,0 +1,14 @@
+# Golden regression script: rejected and malformed input handling.
+INIT
+TELEMETRY seq=1 battery_v=abc temp_c=20 attitude_deg=1 comm=UP sensors=VALID
+TELEMETRY seq=1 battery_v=7.5 temp_c=20 attitude_deg=1 comm=UP
+TELEMETRY seq=1 battery_v=7.5 temp_c=200 attitude_deg=1 comm=UP sensors=VALID
+TELEMETRY seq=3 battery_v=7.5 temp_c=20 attitude_deg=1 comm=UP sensors=VALID
+TELEMETRY seq=2 battery_v=7.5 temp_c=20 attitude_deg=1 comm=UP sensors=VALID
+EXIT_SAFE_MODE
+PAYLOAD ON
+init
+PAYLOAD sideways
+TICK 0
+RESET
+STATUS

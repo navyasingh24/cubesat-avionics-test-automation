@@ -1,0 +1,56 @@
+{
+  "id": "FI-07",
+  "title": "Malformed command arguments",
+  "requirements": [
+    "REQ-CMD-003",
+    "REQ-TLM-003"
+  ],
+  "description": "Known commands with invalid arguments are rejected with INVALID_ARGUMENT and do not change state.",
+  "initial_state": "NOMINAL",
+  "setup": [
+    "@nominal_boot"
+  ],
+  "inject": [
+    "TICK abc",
+    "TICK -5",
+    "TICK 0",
+    "TICK 3601",
+    "PAYLOAD MAYBE",
+    "RESET NOW",
+    "STATUS extra",
+    "TELEMETRY seq=2 battery_v=7.x temp_c=20 attitude_deg=1 comm=UP sensors=VALID",
+    "TELEMETRY seq=2 battery_v=7.5 temp_c=20 attitude_deg=1 comm=SOMETIMES sensors=VALID"
+  ],
+  "expect": {
+    "inject_status": [
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "REJECTED",
+      "REJECTED"
+    ],
+    "inject_error_codes": [
+      "INVALID_ARGUMENT",
+      "INVALID_ARGUMENT",
+      "INVALID_ARGUMENT",
+      "INVALID_ARGUMENT",
+      "INVALID_ARGUMENT",
+      "INVALID_ARGUMENT",
+      "INVALID_ARGUMENT",
+      "INVALID_ARGUMENT",
+      "INVALID_ARGUMENT"
+    ],
+    "final_mode": "NOMINAL",
+    "active_violations": [],
+    "events_present": [
+      "COMMAND_REJECTED"
+    ],
+    "events_absent": [
+      "MODE_CHANGE"
+    ]
+  }
+}

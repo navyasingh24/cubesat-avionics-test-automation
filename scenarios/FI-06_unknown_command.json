@@ -1,0 +1,37 @@
+{
+  "id": "FI-06",
+  "title": "Unknown command",
+  "requirements": [
+    "REQ-CMD-002"
+  ],
+  "description": "Commands that are not in the command table are rejected and logged; state is unchanged.",
+  "initial_state": "NOMINAL",
+  "setup": [
+    "@nominal_boot"
+  ],
+  "inject": [
+    "DEPLOY_SOLAR_SAIL",
+    "self_destruct now",
+    "STATUS"
+  ],
+  "expect": {
+    "inject_status": [
+      "REJECTED",
+      "REJECTED",
+      "OK"
+    ],
+    "inject_error_codes": [
+      "UNKNOWN_COMMAND",
+      "UNKNOWN_COMMAND",
+      null
+    ],
+    "final_mode": "NOMINAL",
+    "active_violations": [],
+    "events_present": [
+      "COMMAND_REJECTED"
+    ],
+    "events_absent": [
+      "MODE_CHANGE"
+    ]
+  }
+}

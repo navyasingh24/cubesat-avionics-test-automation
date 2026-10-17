@@ -1,0 +1,35 @@
+{
+  "id": "FI-01",
+  "title": "Low battery",
+  "requirements": [
+    "REQ-SAF-001",
+    "REQ-MODE-001",
+    "REQ-MODE-006"
+  ],
+  "description": "Battery voltage drops just below battery_min_v (6.8 V demo threshold) while NOMINAL with the payload on.",
+  "initial_state": "NOMINAL",
+  "setup": [
+    "@nominal_boot",
+    "PAYLOAD ON"
+  ],
+  "inject": [
+    "TELEMETRY seq=2 battery_v=6.79 temp_c=22.5 attitude_deg=2.0 comm=UP sensors=VALID"
+  ],
+  "expect": {
+    "inject_status": [
+      "OK"
+    ],
+    "final_mode": "SAFE_MODE",
+    "active_violations": [
+      "BATTERY_LOW"
+    ],
+    "events_present": [
+      "SAFETY_VIOLATION",
+      "MODE_CHANGE",
+      "PAYLOAD_POWER_OFF"
+    ],
+    "modes_never": [
+      "FAULT"
+    ]
+  }
+}
